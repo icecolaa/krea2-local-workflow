@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Krea2 本地出图工作流 · 作战手册</title>
+<style>
+  :root{
+    --ink:#15191e; --ink2:#39414a; --muted:#77818c; --line:#e3e7ec;
+    --bg:#f2f4f6; --card:#fff; --soft:#f7f8fa;
+    --g:#0b8f63; --gs:#e6f6f0; --b:#2563d8; --bs:#e8effc;
+    --a:#a8690a; --as:#fdf3e2; --r:#c93a3a; --rs:#fcecec;
+    --p:#5b4bc4; --ps:#efeafc;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg); color:var(--ink); font-size:13px; line-height:1.5;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1340px;margin:0 auto;padding:12px 16px 28px}
+  header{
+    background:var(--card);border:1px solid var(--line);border-radius:9px;
+    padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+  }
+  header h1{font-size:17px;font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+  header h1 span{font-weight:400;color:var(--muted);font-size:12px;margin-left:8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+  .chip{
+    background:var(--soft);border:1px solid var(--line);border-radius:5px;
+    padding:2px 8px;font-size:11.5px;color:var(--ink2);font-variant-numeric:tabular-nums;
+  }
+  .chip b{color:var(--g);font-size:12.5px;margin-right:3px}
+  .lede{
+    background:linear-gradient(90deg,var(--gs),#fff 65%);
+    border:1px solid #cbe9dc;border-left:3px solid var(--g);
+    border-radius:6px;padding:8px 12px;margin-bottom:8px;font-size:13px;color:var(--ink);
+  }
+  .lede b{color:var(--g)}
+  .g{display:grid;gap:8px;margin-bottom:8px}
+  .c2{grid-template-columns:1fr 1fr}
+  .c3{grid-template-columns:repeat(3,1fr)}
+  .c4{grid-template-columns:repeat(4,1fr)}
+  .c12{grid-template-columns:1fr 1.5fr}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+  .mod{
+    background:var(--bg2);border:1px solid var(--bd);border-radius:11px;
+    padding:0 9px 9px;margin:0 0 9px;
+  }
+  .mod>h2{
+    margin:0 -9px 8px;padding:6px 12px;border-left:none;
+    border-bottom:1px solid var(--bd);border-radius:10px 10px 0 0;
+    background:var(--hd);color:var(--ac);font-size:14px;
+    line-height:1.25;display:flex;align-items:baseline;gap:8px;
+  }
+  .mod>h2 em{font-style:normal;font-size:11.5px;font-weight:400;color:var(--ac);opacity:.65}
+  .mod .card{background:#fff;border-color:var(--bd)}
+  .mod table th{background:var(--hd2)}
+  .mod .pb{background:#fff;border-color:var(--bd);border-left:2px solid var(--ac)}
+  .mod .pb h4{color:var(--ac)}
+  .m1{--ac:#0b7d57;--hd:#d9f0e5;--hd2:#f0faf5;--bd:#c7e6d9;--bg2:#f3faf6}
+  .m2{--ac:#1f5bc4;--hd:#dce8fb;--hd2:#f1f6fd;--bd:#c8dcf6;--bg2:#f2f6fd}
+  .m3{--ac:#94600a;--hd:#f9ecd2;--hd2:#fdf8ee;--bd:#efdfb6;--bg2:#fdf9ef}
+  .m4{--ac:#5443bf;--hd:#e7e1fa;--hd2:#f4f1fe;--bd:#d7cef4;--bg2:#f5f2fe}
+  .m5{--ac:#0f6f7a;--hd:#d7edf0;--hd2:#f0fafb;--bd:#c1e0e5;--bg2:#f1fafb}
+  .m6{--ac:#ab2f2f;--hd:#fadcdc;--hd2:#fdf4f4;--bd:#f0c7c7;--bg2:#fdf4f4}
+  .m7{--ac:#9c3579;--hd:#f8e0f0;--hd2:#fdf3f9;--bd:#eecbe1;--bg2:#fdf3f9}
+  .m8{--ac:#3d5566;--hd:#e2eaf0;--hd2:#f5f9fb;--bd:#d1dde6;--bg2:#f6f9fb}
+  h3{font-size:12.5px;font-weight:700;margin-bottom:4px}
+  p{color:var(--ink2)}
+  ul{list-style:none}
+  li{padding-left:11px;position:relative;color:var(--ink2);margin:2px 0}
+  li::before{content:"";position:absolute;left:2px;top:7px;width:3px;height:3px;border-radius:50%;background:#b9c2cc}
+  li b{color:var(--ink)}
+  small{font-size:11.5px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{
+    text-align:left;font-weight:600;color:var(--muted);font-size:10.5px;letter-spacing:.03em;
+    padding:3px 7px;border-bottom:1px solid var(--line);background:var(--soft);white-space:nowrap;
+  }
+  td{padding:4px 7px;border-bottom:1px solid #eef1f4;vertical-align:top;color:var(--ink2)}
+  tr:last-child td{border-bottom:none}
+  td b{color:var(--ink)}
+  .nowrap{white-space:nowrap}
+  code{
+    font-family:"Cascadia Mono",Consolas,monospace;font-size:11px;
+    background:var(--soft);border:1px solid #eceff3;border-radius:3px;padding:0 3px;color:#1f2937;
+    word-break:break-all;
+  }
+  .tag{display:inline-block;font-size:10.5px;font-weight:600;padding:0 5px;border-radius:3px;line-height:16px}
+  .tg{background:var(--gs);color:var(--g)}
+  .tb{background:var(--bs);color:var(--b)}
+  .ta{background:var(--as);color:var(--a)}
+  .tr{background:var(--rs);color:var(--r)}
+  .pb{
+    break-inside:avoid;background:var(--soft);border:1px solid var(--line);
+    border-left:2px solid var(--p);border-radius:4px;padding:7px 9px;margin-bottom:8px;
+  }
+  .pb h4{font-size:12px;font-weight:700;color:var(--p);margin-bottom:3px}
+  .pb p{font-size:11.5px;line-height:1.55;color:#2f363e;text-align:justify}
+  .risk li{border-bottom:1px dashed #f0d6d6;padding:4px 0 4px 13px}
+  .risk li:last-child{border-bottom:none}
+  .risk li::before{background:#e08b8b;top:10px}
+  .risk b{color:var(--r)}
+  .shot{width:100%;border:1px solid var(--line);border-radius:6px;display:block}
+  .shotgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .shotgrid figure{margin:0}
+  .shotgrid figcaption{font-size:11px;color:var(--muted);padding:3px 2px}
+  footer{
+    margin-top:2px;padding-top:9px;border-top:1px solid var(--line);
+    font-size:11px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  @media (max-width:1000px){
+    .c2,.c3,.c4,.c12,.shotgrid{grid-template-columns:1fr}
+    header{gap:10px}
+    .chips{margin-left:0}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Krea2 本地出图工作流 · 作战手册<span>从零到出图的完整实录（2026-10-30）</span></h1>
+    <div class="chips">
+      <div class="chip"><b>RTX 3080</b>10GB</div>
+      <div class="chip"><b>17.3GB</b>三件套</div>
+      <div class="chip"><b>22.3GB</b>AIO</div>
+      <div class="chip"><b>3</b>人像LoRA</div>
+      <div class="chip"><b>80s</b>缓存出图</div>
+    </div>
+  </header>
+
+  <div class="lede"><b>一句话：</b>ComfyUI 便携版跑 Krea2 Turbo（FP8）+ Ins 风 LoRA，配「四段式固定人物提示词」，一键启动器拉后端 + Comfy Desktop 远程连接当壳。本机已在 2026-10-30 全程跑通：样本 A「机械姬」基线 + LoRA 对比两张出图成功，工作流已装库，仓库已建。</div>
+
+  <section class="mod m1">
+    <h2>01 环境总览 <em>一切路径与版本，排障时照着对</em></h2>
+    <div class="g c2">
+      <div class="card">
+        <h3>双机位架构</h3>
+        <table>
+          <tr><th class="nowrap">角色</th><th>位置与说明</th></tr>
+          <tr><td class="nowrap"><b>后端（唯一干活的）</b></td><td><code>D:\LocalAI\ComfyUI_windows_portable</code> 便携版，v0.43.0，端口 <code>8188</code>。由桌面启动器或 Qoder 拉起，关窗即停</td></tr>
+          <tr><td class="nowrap"><b>界面壳 A</b></td><td>浏览器开 <code>http://127.0.0.1:8188</code>（最稳）</td></tr>
+          <tr><td class="nowrap"><b>界面壳 B</b></td><td>Comfy Desktop（<code>E:\application\Comfy Desktop</code>）→「远程连接」→ <code>127.0.0.1:8188</code>，只是壳，后端永远是便携版</td></tr>
+          <tr><td class="nowrap"><b>模型库</b></td><td><code>E:\Comfy-Desktop\ComfyUI-Shared\models</code>，经 <code>D:\LocalAI\...\ComfyUI\extra_model_paths.yaml</code> 挂进便携版，D 盘旧模型（minimax_h3、qwen_image_2.1）同时可见</td></tr>
+          <tr><td class="nowrap"><b>一键启动器</b></td><td><code>D:\桌面\启动ComfyUI.bat</code>：检测 8188 → 没跑就最小化窗口拉后端 → 等就绪 → 自动打开 Desktop（仓库内 <code>scripts/</code> 有副本）</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>模型清单（全部在 E 盘共享目录）</h3>
+        <table>
+          <tr><th>文件</th><th class="nowrap">大小</th><th class="nowrap">目录</th></tr>
+          <tr><td><code>krea2_turbo_fp8_scaled.safetensors</code></td><td>12.24 GB</td><td>diffusion_models</td></tr>
+          <tr><td><code>qwen3vl_4b_fp8_scaled.safetensors</code></td><td>4.88 GB</td><td>text_encoders</td></tr>
+          <tr><td><code>qwen_image_vae.safetensors</code></td><td>0.24 GB</td><td>vae</td></tr>
+          <tr><td><code>krea2-Cc-Ins风-人像</code> / <code>风情万种</code> / <code>MJ-风格滤镜</code></td><td>各 343 MB</td><td>loras</td></tr>
+          <tr><td><code>Krea2-turbo-Ink_Jade-AIO-V1-fp8</code>（墨玉三合一）</td><td>22.3 GB</td><td>checkpoints</td></tr>
+        </table>
+        <p style="margin-top:5px"><small>下载一律走 <code>hf-mirror.com</code> 镜像（直连 HuggingFace 超时）；Krea2 权重用不设门槛的 <code>Comfy-Org/Krea-2</code>（官方 <code>krea/Krea-2-Turbo</code> 是 gated）。三件套 + AIO 二选一即可出图，LoRA 都通用。</small></p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>实出样图（种子 42，832×1216，唯一变量 = 有无 Ins 风 LoRA 0.8）</h3>
+      <div class="shotgrid" style="max-width:760px;margin-top:4px">
+        <figure><img class="shot" src="assets/sample-基线.png" alt="基线"><figcaption>基线：偏写实摄影感，人要素一点</figcaption></figure>
+        <figure><img class="shot" src="assets/sample-InsLoRA.png" alt="InsLoRA"><figcaption>挂 Ins 风 LoRA 0.8：更精致「仙」，宝石通透、纱质华丽——「没加 lora 人要素一点，加了 lora 人物仙一点」</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod m2">
+    <h2>02 日常使用 <em>三步启动，三条出图通道</em></h2>
+    <div class="g c3">
+      <div class="card">
+        <h3>启动（三步）</h3>
+        <ul>
+          <li><b>双击桌面「启动ComfyUI.bat」</b>——后端自动最小化到任务栏（标题带 Backend 8188，<b>关那个窗口=停止服务</b>）</li>
+          <li>Comfy Desktop 自动打开 → 点<b>「远程连接」</b>→ <code>127.0.0.1:8188</code></li>
+          <li>不想用壳就浏览器开 <code>127.0.0.1:8188</code></li>
+        </ul>
+        <p style="margin-top:4px"><small>规则：一次只开一个实例（10GB 显存经不起两个后端抢）；双击后如果报端口被占，说明已有一个在跑，直接开浏览器用。</small></p>
+      </div>
+      <div class="card">
+        <h3>出图（三条通道）</h3>
+        <table>
+          <tr><th class="nowrap">通道</th><th>适用</th></tr>
+          <tr><td class="nowrap"><b>UI 点「运行」</b></td><td>日常调提示词、看图最直观</td></tr>
+          <tr><td class="nowrap"><b>命令行脚本</b></td><td>批量/复现：<code>node krea2-generate.mjs &lt;nolora|lora&gt; &lt;种子&gt; &lt;输出名&gt;</code>，结果在 <code>krea2-out\</code></td></tr>
+          <tr><td class="nowrap"><b>API 队列</b></td><td><code>POST 127.0.0.1:8188/prompt</code>，脚本源码就是现成的参考实现</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h3>工作流库（左侧「工作流」面板）</h3>
+        <ul>
+          <li><b>「Krea2·固定人设·官方版」</b>——主力。官方 Turbo 模板改造：样本 A 提示词已填、云端增强已关、Ins 风 LoRA 已挂 0.8、种子 42 固定</li>
+          <li>双击大节点进<b>子图</b>看内部实现（8 步 / CFG 1 / euler / simple / 负向 ConditioningZeroOut），能看懂就别改</li>
+          <li>分辨率在 <b>ResolutionSelector</b> 下拉改（竖幅选 2:3 类预设）</li>
+          <li>LoRA 对比：<b>选中 LoRA 节点按 Ctrl+B</b> 旁路；种子 fixed 不变，只改权重 0.5/0.8/1.0 各跑一张</li>
+          <li>「Krea2·官方示例」留作参照；它右侧弹的 darkbrush 缺失警告<b>无视</b>（别点内置下载，那是 HF 直连）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod m3">
+    <h2>03 提示词方法论 <em>会玩和不会玩是 2 个世界</em></h2>
+    <div class="g c12">
+      <div class="card">
+        <h3>四段式分工（换题材只动后两段）</h3>
+        <table>
+          <tr><th class="nowrap">段</th><th>作用</th><th class="nowrap">换不换</th></tr>
+          <tr><td><b>【画面风格】</b></td><td>镜头/光线/质感（50mm、f/2.8、体积光…）</td><td class="nowrap"><span class="tag tg">固定</span></td></tr>
+          <tr><td><b>【核心元素】</b></td><td>人物长相 + 服装 + 配饰——这就是「固定人物模板」，跨图一致的锚</td><td class="nowrap"><span class="tag tg">固定</span></td></tr>
+          <tr><td><b>【具体内容】</b></td><td>动作、视线、前景背景、场景光</td><td class="nowrap"><span class="tag tb">每次换</span></td></tr>
+          <tr><td><b>【构图方式】</b></td><td>半身/全身、机位、留白</td><td class="nowrap"><span class="tag tb">每次换</span></td></tr>
+        </table>
+        <ul style="margin-top:6px">
+          <li>服装换装：新服装描述写进【核心元素】，替换原服装那部分</li>
+          <li>表情不用找图：<b>直接描述</b>（可爱脸 / 害羞脸 / 清冷脸）</li>
+          <li>全身服装上身展示类，改用<b>分层式</b>：主体→表情→服装姿势→背景光线→构图→质感 六层逐层写</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>样本 A · 机械姬（当前工作流内置，可整段照搬到任意题材）</h3>
+        <div class="pb">
+          <h4>四段式固定人物模板</h4>
+          <p>【画面风格】全画幅写实摄影，50mm定焦，f/2.8，光圈优先，精准单点对焦锁定面部，科幻冷调柔光，极致锐利清晰，体积光，柔焦虚化，环境光遮蔽。【核心元素】固定人物模板：东亚女性鹅蛋脸白皙，银白色短发，蓝眼睛，红润嘴唇，精致妆容，机械姬；白色机械装甲，金属质感，镶嵌蓝宝石，颈部与手臂露出机械结构，白色薄纱披肩，银色华丽头冠镶蓝宝石齿轮，服装与配饰物理空间绑定不可分离；本段白色科幻空间柔和侧光。【具体内容】人物身体微侧，双手交叠胸前，低头看胸前蓝宝石，视线向下，表情沉静；前景虚化机械零件，中景白色空间，背景柔光光斑；顶侧柔光，环境光遮蔽，阴影过渡柔和，50mm透视自然，人物与空间关系真实。【构图方式】半身（medium shot），微俯正面偏侧，对角线构图，人物居中偏左，右侧留白。</p>
+        </div>
+        <p><small>作者经验：套固定模板可以让人物跨图保持一致，「迭代了几十版了」。</small></p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>LoRA 与采样经验（当天实测沉淀）</h3>
+      <ul>
+        <li><b>LoRA 决定「仙不仙」</b>——画人务必挂人像 LoRA（Ins 风 / 风情万种），风格滤镜（MJ）可串联，权重 0.8 起步调</li>
+        <li><b>对比要公平</b>——seed 从 randomize 改 fixed，只动一个变量各跑一张，差异才能归因</li>
+        <li><b>人脸一致性两条路</b>——先出图再换脸（更简单），或把模特练成专属 LoRA（意义不大）</li>
+        <li><b> turbo 系参数铁律</b>——8 步、CFG 1、euler/simple；负向接 ConditioningZeroOut 而不是负向词；CFG 设 3 反而劣化</li>
+        <li><b>墨玉 AIO 单文件线</b>——Load Checkpoint 一个节点顶三件套，免折腾通用底模，「画幻想生物也行」；发糊/过饱和再试 CFG 2–3.5</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mod m4">
+    <h2>04 玩法清单 <em>从「能出图」到「有产能」</em></h2>
+    <div class="g c4">
+      <div class="card">
+        <h3>① 图鉴抽卡 → 换装换姿势</h3>
+        <ul>
+          <li><a href="https://www.lanxi1023.com/costume.html">蓝熙衣装×姿势图鉴</a>：点「随机生成」抽一套</li>
+          <li><a href="https://github.com/vculjp/ai-reference-gallery">玄鸟图鉴源码</a>：clone 到本地 = 离线图库，支持 Skill</li>
+          <li><a href="https://github.com/paipiange/nvzhuang">拍片哥女装库</a></li>
+          <li>选定后：服装 →【核心元素】，姿势/场景 →【具体内容】</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>② 服装提示词库 + 随机抽卡</h3>
+        <ul>
+          <li>把效果好的「服装+姿势」描述存成 <code>prompts.json</code></li>
+          <li>写个小脚本随机抽两条拼进模板——猎鲸狐的下一步计划，你已具备全部条件</li>
+          <li>批量复现直接跑 <code>krea2-generate.mjs</code> 循环</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>③ 风格扩充</h3>
+        <ul>
+          <li>官方 10 个风格 LoRA 就在 <code>Comfy-Org/Krea-2</code> 仓库：retroanime / softwatercolor / neondrip / darkbrush…</li>
+          <li>想要哪个说一声，走镜像 1 分钟拉到位</li>
+          <li>民间 LoRA 主战场：civitai 搜「Krea 2」标签</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>④ 视频线（展望）</h3>
+        <ul>
+          <li>D 盘已有 <code>minimax_h3</code> 模型与 Spectrum 节点</li>
+          <li>H3 出 768P → Open-H3-Regenerate-2K 重绘到 2K（ComfyUI ≥0.30 内置节点，提示词原封不动传入；模型约 21GB）</li>
+          <li>做视频租云端，自己买卡不划算——本地这条只当玩票</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="mod m6">
+    <h2>05 排障手册 <em>每一条都是当天真实撞过的墙</em></h2>
+    <div class="card">
+      <ul class="risk">
+        <li><b>工作流打开一片空白节点</b>——前端 v1.57.4 不认手写序列化 JSON（有端口无标题无参数）。解法：刷新；根治：一律以官方模板为底改 JSON，别手写。</li>
+        <li><b>模型下拉里找不到新文件</b>——便携版启动时扫描模型目录，后加的文件要<b>重启后端</b>才可见；先查 <code>extra_model_paths.yaml</code> 是否挂对了目录。</li>
+        <li><b>HuggingFace 直连超时</b>——全部走 <code>hf-mirror.com</code>；gated 仓库（krea/Krea-2-Turbo）下不了就用 <code>Comfy-Org/Krea-2</code>。</li>
+        <li><b>Comfy Desktop「没有可安装的兼容构建」</b>——builder API 在你的网络直连不通（desktop/repo/launch.comfy.org 全超时），开系统级代理重启即可装；装好后它独立成第二后端，仍别和便携版同开。</li>
+        <li><b>队列面板出现「正在执行 N 小时」僵尸任务</b>——点清理队列/红色 X 清掉即可，历史记录没增长就是没真跑。</li>
+        <li><b>官方示例弹「需要设置 krea2_darkbrush」</b>——无视。那个 LoRA 没下载也不影响（开关默认旁路）；内置下载按钮走 HF 直连会卡死。</li>
+        <li><b>显存爆了（CUDA OOM）</b>——10GB 卡：分辨率别超 1024×1536 档；启动参数加 <code>--lowvram</code>；32GB 内存会自动卸载兜底。</li>
+        <li><b>CLIP 类型选错全图崩</b>——CLIPLoader 的「类型」必须 <code>krea2</code>（不是 lumina2）；VAE 必须 <code>qwen_image_vae</code>（不是 minimax 视频那个）；不需要 AuraFlow 采样节点。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="mod m5">
+    <h2>06 资源与提取码 <em>夸克网盘原文照录（文章 02 节）</em></h2>
+    <div class="card">
+      <table>
+        <tr><th class="nowrap">文件</th><th>地址与提取码</th><th class="nowrap">状态</th></tr>
+        <tr><td><b>墨玉 AIO 模型</b></td><td><code>pan.quark.cn/s/056cdb2bf2fd</code> · 提取码 <b>~dc7f3bsTCe~</b></td><td class="nowrap"><span class="tag tg">已入库</span></td></tr>
+        <tr><td><b>krea2-Cc-Ins风-人像</b></td><td><code>pan.quark.cn/s/20b33a9bc080</code> · 提取码 <b>~7f173bsTfr~</b></td><td class="nowrap"><span class="tag tg">已入库</span></td></tr>
+        <tr><td><b>krea2-Cc风情万种-人像</b></td><td><code>pan.quark.cn/s/71262f2e498a</code> · 提取码 <b>~1b623bsSkC~</b></td><td class="nowrap"><span class="tag tg">已入库</span></td></tr>
+        <tr><td><b>krea2-Cc-MJ-风格滤镜</b></td><td><code>pan.quark.cn/s/912560a223bc</code> · 提取码 <b>~91e93bsSkd~</b></td><td class="nowrap"><span class="tag tg">已入库</span></td></tr>
+        <tr><td><b>Comfy-Org/Krea-2 官方仓库</b></td><td><code>hf-mirror.com/Comfy-Org/Krea-2</code>（含三件套 + 10 官方风格 LoRA）</td><td class="nowrap"><span class="tag tb">主粮仓</span></td></tr>
+        <tr><td><b>模型站 civitai</b></td><td><code>civitai.com</code>（民间 LoRA 主战场）</td><td class="nowrap"><span class="tag ta">补充</span></td></tr>
+      </table>
+      <p style="margin-top:5px"><small>模型来源口径（群内原话）：「官网模型都没人用，得用民间的」「开源社区才会支持起来」。</small></p>
+    </div>
+  </section>
+
+  <footer>
+    <div>仓库：<code>krea2-local-workflow</code> · 手册 <code>index.html</code> · 脚本 <code>krea2-generate.mjs</code> / <code>scripts/启动ComfyUI.bat</code></div>
+    <div>生成于 2026-10-30 · 后端 ComfyUI 0.43.0 · 前端 1.57.4 · 数据源：当天全程实测 + 「手绘-贴图」看板（2026-10-29）</div>
+  </footer>
+</div>
+</body>
+</html>
